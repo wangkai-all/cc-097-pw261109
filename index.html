@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICS 日历展开工具 — 每一次实际日程</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="app-header">
+  <div class="brand">
+    <h1>ICS 日历展开工具</h1>
+    <p class="subtitle">导入 ICS，按重复规则展开每一次实际日程 · 数据仅保存在本机浏览器</p>
+  </div>
+  <div class="header-actions">
+    <button id="btn-samples" class="btn btn-ghost" type="button">载入样本日历</button>
+    <select id="subscription-select" class="select" title="已保存的订阅"></select>
+    <button id="btn-delete-sub" class="btn btn-ghost btn-danger" type="button">删除订阅</button>
+  </div>
+</header>
+
+<section class="toolbar">
+  <div class="toolbar-group upload-group">
+    <label class="btn btn-primary file-label">
+      选择 ICS 文件
+      <input id="file-input" type="file" accept=".ics,text/calendar" hidden>
+    </label>
+    <div id="drop-zone" class="drop-zone">或把 .ics 文件拖到这里</div>
+  </div>
+  <div class="toolbar-group">
+    <label class="field">
+      <span>订阅名称</span>
+      <input id="sub-name" class="input" type="text" placeholder="同名订阅再次导入即触发对比">
+    </label>
+    <label class="field">
+      <span>展开范围（结束日不含）</span>
+      <span class="range-inputs">
+        <input id="range-start" class="input" type="date">
+        <em>至</em>
+        <input id="range-end" class="input" type="date">
+      </span>
+    </label>
+    <button id="btn-apply-range" class="btn" type="button">应用范围</button>
+  </div>
+  <div class="toolbar-group view-toggle" role="tablist">
+    <button id="tab-calendar" class="btn btn-tab active" role="tab" type="button">日历视图</button>
+    <button id="tab-table" class="btn btn-tab" role="tab" type="button">明细表</button>
+  </div>
+</section>
+
+<section id="diff-banner" class="diff-banner hidden">
+  <div class="diff-stats">
+    <span class="chip chip-added">新增 <b id="diff-added-count">0</b></span>
+    <span class="chip chip-changed">变更 <b id="diff-changed-count">0</b></span>
+    <span class="chip chip-cancelled">取消/消失 <b id="diff-cancelled-count">0</b></span>
+    <span class="chip chip-unchanged">未变 <b id="diff-unchanged-count">0</b></span>
+  </div>
+  <div class="diff-controls">
+    <label class="field inline">
+      <span>明细表筛选</span>
+      <select id="diff-filter" class="select">
+        <option value="all">全部日程</option>
+        <option value="added">仅新增</option>
+        <option value="changed">仅变更</option>
+        <option value="cancelled">仅取消/消失</option>
+        <option value="unchanged">仅未变</option>
+      </select>
+    </label>
+    <button id="btn-toggle-history" class="btn btn-ghost" type="button">查看上次结果</button>
+    <button id="btn-dismiss-diff" class="btn btn-ghost" type="button">收起对比</button>
+  </div>
+</section>
+
+<section id="warnings-panel" class="panel hidden">
+  <h2>解析告警与未支持规则 <span id="warning-count" class="count-badge"></span></h2>
+  <div id="warnings-list" class="warnings-list"></div>
+</section>
+
+<main class="main-content">
+  <section id="calendar-view" class="view">
+    <div class="calendar-nav">
+      <button id="cal-prev" class="btn btn-ghost" type="button">‹ 上月</button>
+      <h2 id="cal-title"></h2>
+      <button id="cal-today" class="btn btn-ghost" type="button">今天</button>
+      <button id="cal-next" class="btn btn-ghost" type="button">下月 ›</button>
+    </div>
+    <div class="calendar-grid" id="calendar-grid"></div>
+    <p class="hint">点击任意日程块，查看它来自哪条原始 VEVENT 记录。</p>
+  </section>
+
+  <section id="table-view" class="view hidden">
+    <div class="table-meta">
+      <span id="table-count"></span>
+    </div>
+    <div class="table-wrap">
+      <table class="detail-table">
+        <thead>
+          <tr>
+            <th>状态</th><th>日期</th><th>时间</th><th>标题</th><th>来源</th><th>时区/类型</th><th>UID</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="empty-state" class="empty-state">
+    <h2>还没有日程</h2>
+    <p>上传 ICS 文件，或点击右上角「载入样本日历」快速体验。</p>
+    <div class="sample-list" id="sample-list"></div>
+  </section>
+</main>
+
+<aside id="detail-drawer" class="drawer hidden" aria-hidden="true">
+  <div class="drawer-head">
+    <h2>日程来源详情</h2>
+    <button id="drawer-close" class="btn btn-ghost" type="button">✕</button>
+  </div>
+  <div id="drawer-body" class="drawer-body"></div>
+</aside>
+
+<div id="toast" class="toast hidden"></div>
+
+<script type="module" src="src/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "ics-recurrence-expander",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "导入 ICS 日历，按 RRULE/EXDATE/RDATE/例外记录展开每一次实际日程",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test test/*.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
